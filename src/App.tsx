@@ -89,7 +89,7 @@ const App = () => {
               <ProtectedRoute
                 isAuthenticated={true}
                 adminOnly={true}
-                admin={user?.role === "admin" ? true : false}
+                admin={user?.role === "user" ? true : false}
               />
             }
           >
