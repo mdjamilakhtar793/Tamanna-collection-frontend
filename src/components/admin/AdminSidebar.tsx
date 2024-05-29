@@ -59,7 +59,8 @@ const AdminSidebar = () => {
             : {}
         }
       >
-        <img src="/TC.png" alt="photo" sizes="auto" />
+        {/* <img src="/TC.png" alt="photo" sizes="auto" /> */}
+        <h2>Tamanna-Collection💍🔔</h2>
         <DivOne location={location} />
         <DivTwo location={location} />
         <DivThree location={location} />
