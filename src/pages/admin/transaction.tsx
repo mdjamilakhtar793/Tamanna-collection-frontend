@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-non-null-asserted-optional-chain */
 import { ReactElement, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
@@ -8,8 +7,8 @@ import AdminSidebar from "../../components/admin/AdminSidebar";
 import TableHOC from "../../components/admin/TableHOC";
 import { Skeleton } from "../../components/loader";
 import { useAllOrdersQuery } from "../../redux/api/orderAPI";
+import { RootState } from "../../redux/store";
 import { CustomError } from "../../types/api-types";
-import { UserReducerInitialState } from "../../types/reducer-types";
 
 interface DataType {
   user: string;
@@ -48,12 +47,17 @@ const columns: Column<DataType>[] = [
 ];
 
 const Transaction = () => {
+  const { user } = useSelector((state: RootState) => state.userReducer);
+
+  // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
+  const { isLoading, data, isError, error } = useAllOrdersQuery(user?._id!);
+
   const [rows, setRows] = useState<DataType[]>([]);
-  const { user } = useSelector(
-    (state: { userReducer: UserReducerInitialState }) => state.userReducer
-  );
-  const { data, isLoading, isError, error } = useAllOrdersQuery(user?._id!);
-  if (isError) toast.error((error as CustomError).data.message);
+
+  if (isError) {
+    const err = error as CustomError;
+    toast.error(err.data.message);
+  }
 
   useEffect(() => {
     if (data)
@@ -80,6 +84,7 @@ const Transaction = () => {
         }))
       );
   }, [data]);
+
   const Table = TableHOC<DataType>(
     columns,
     rows,
@@ -90,7 +95,7 @@ const Transaction = () => {
   return (
     <div className="admin-container">
       <AdminSidebar />
-      <main>{isLoading ? <Skeleton /> : Table}</main>
+      <main>{isLoading ? <Skeleton length={20} /> : Table}</main>
     </div>
   );
 };
