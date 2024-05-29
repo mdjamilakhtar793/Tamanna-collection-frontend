@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import {
   AiOutlineSortAscending,
   AiOutlineSortDescending,
@@ -10,7 +11,7 @@ import {
   TableOptions,
 } from "react-table";
 
-function TableHOC<T extends object>(
+function TableHOC<T extends Object>(
   columns: Column<T>[],
   data: T[],
   containerClassname: string,
