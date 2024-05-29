@@ -10,40 +10,53 @@ import { Skeleton } from "../components/loader";
 import { CartItem } from "../types/types";
 import { addToCart } from "../redux/reducer/cartReducer";
 import { useDispatch } from "react-redux";
+
 const Search = () => {
   const {
     data: categoriesResponse,
     isLoading: loadingCategories,
-    error: productError,
-    isError: productIsError,
+    isError,
+    error,
   } = useCategoriesQuery("");
-
-  // if (isError) toast.error((error as CustomError).data.message);
-  if (productIsError) toast.error((productError as CustomError).data.message);
 
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("");
   const [maxPrice, setMaxPrice] = useState(100000);
   const [category, setCategory] = useState("");
   const [page, setPage] = useState(1);
+
+  const {
+    isLoading: productLoading,
+    data: searchedData,
+    isError: productIsError,
+    error: productError,
+  } = useSearchProductsQuery({
+    search,
+    sort,
+    category,
+    page,
+    price: maxPrice,
+  });
+
   const dispatch = useDispatch();
 
-  const { isLoading: productLoading, data: searchedData } =
-    useSearchProductsQuery({
-      search,
-      sort,
-      category,
-      page,
-      price: maxPrice,
-    });
-  console.log(searchedData);
   const addToCartHandler = (cartItem: CartItem) => {
     if (cartItem.stock < 1) return toast.error("Out of Stock");
     dispatch(addToCart(cartItem));
     toast.success("Added to cart");
   };
+
   const isPrevPage = page > 1;
   const isNextPage = page < 4;
+
+  if (isError) {
+    const err = error as CustomError;
+    toast.error(err.data.message);
+  }
+  if (productIsError) {
+    const err = productError as CustomError;
+    toast.error(err.data.message);
+  }
   return (
     <div className="product-search-page">
       <aside>
@@ -94,7 +107,7 @@ const Search = () => {
         />
 
         {productLoading ? (
-          <Skeleton />
+          <Skeleton length={10} />
         ) : (
           <div className="search-product-list">
             {searchedData?.products.map((i) => (
@@ -110,6 +123,7 @@ const Search = () => {
             ))}
           </div>
         )}
+
         {searchedData && searchedData.totalPage > 1 && (
           <article>
             <button
@@ -119,9 +133,7 @@ const Search = () => {
               Prev
             </button>
             <span>
-              <span>
-                {page} of {searchedData.totalPage}
-              </span>
+              {page} of {searchedData.totalPage}
             </span>
             <button
               disabled={!isNextPage}
