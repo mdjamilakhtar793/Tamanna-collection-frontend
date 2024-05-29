@@ -59,7 +59,7 @@ const AdminSidebar = () => {
             : {}
         }
       >
-        <h2>Logo.</h2>
+        <img src="/TC.png" alt="photo" sizes="auto" />
         <DivOne location={location} />
         <DivTwo location={location} />
         <DivThree location={location} />
